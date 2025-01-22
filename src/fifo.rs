@@ -1,5 +1,5 @@
 use core::convert::{TryFrom, TryInto};
-use embedded_hal::i2c::I2c;
+use embedded_hal_async::i2c::I2c;
 
 use crate::{ctrl1xl, ctrl2g, AccelValue, GyroValue, Register};
 
@@ -47,7 +47,7 @@ impl FifoOut {
     }
 
     /// Pop a value from the FIFO.
-    pub fn pop<I2C>(
+    pub async fn pop<I2C>(
         &mut self,
         i2c: &mut I2C,
         gyro_scale: ctrl2g::Fs,
@@ -57,7 +57,7 @@ impl FifoOut {
         I2C: I2c,
     {
         let mut out = [0u8; 7];
-        i2c.write_read(self.address, &[ADDR], &mut out)?;
+        i2c.write_read(self.address, &[ADDR], &mut out).await?;
 
         let (tag, out) = out.split_at(1);
         let tag = tag[0] >> 3;

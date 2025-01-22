@@ -101,55 +101,55 @@ impl FifoCtrl {
     }
 
     /// Enable compression of values in FIFO, increasing FIFO size from 3kB to maximum 9kB.
-    pub fn compression<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
+    pub async fn compression<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: embedded_hal::i2c::I2c,
+        I2C: embedded_hal_async::i2c::I2c,
     {
         self.value[1] &= !(1 << 6);
         self.value[1] |= (value as u8) << 6;
-        self.write(i2c, self.address, ADDR + 1, self.value[1])
+        self.write(i2c, self.address, ADDR + 1, self.value[1]).await
     }
 
     /// Set the FIFO mode (or disable FIFO)
-    pub fn mode<I2C>(&mut self, i2c: &mut I2C, mode: FifoMode) -> Result<(), I2C::Error>
+    pub async fn mode<I2C>(&mut self, i2c: &mut I2C, mode: FifoMode) -> Result<(), I2C::Error>
     where
-        I2C: embedded_hal::i2c::I2c,
+        I2C: embedded_hal_async::i2c::I2c,
     {
         const RESET: u8 = 0b111;
 
         self.value[3] &= !RESET;
         self.value[3] |= mode as u8;
-        self.write(i2c, self.address, ADDR + 3, self.value[3])
+        self.write(i2c, self.address, ADDR + 3, self.value[3]).await
     }
 
     /// Set the batch data rate for the accelerometer.
-    pub fn set_accelerometer_batch_data_rate<I2C>(
+    pub async fn set_accelerometer_batch_data_rate<I2C>(
         &mut self,
         i2c: &mut I2C,
         rate: BdrXl,
     ) -> Result<(), I2C::Error>
     where
-        I2C: embedded_hal::i2c::I2c,
+        I2C: embedded_hal_async::i2c::I2c,
     {
         const RESET: u8 = 0b00001111;
         self.value[2] &= !RESET;
         self.value[2] |= rate as u8;
-        self.write(i2c, self.address, ADDR + 2, self.value[2])
+        self.write(i2c, self.address, ADDR + 2, self.value[2]).await
     }
 
     /// Set the batch data rate for the gyroscope.
-    pub fn set_gyroscope_batch_data_rate<I2C>(
+    pub async fn set_gyroscope_batch_data_rate<I2C>(
         &mut self,
         i2c: &mut I2C,
         rate: BdrGy,
     ) -> Result<(), I2C::Error>
     where
-        I2C: embedded_hal::i2c::I2c,
+        I2C: embedded_hal_async::i2c::I2c,
     {
         const RESET: u8 = 0b11110000;
         self.value[2] &= !RESET;
         self.value[2] |= (rate as u8) << 4;
-        self.write(i2c, self.address, ADDR + 2, self.value[2])
+        self.write(i2c, self.address, ADDR + 2, self.value[2]).await
     }
 }
 

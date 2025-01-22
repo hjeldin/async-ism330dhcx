@@ -57,7 +57,7 @@ async fn main(_spawner: Spawner) {
 // Booting the sensor accoring to Adafruit's driver
 fn boot_sensor<I2C>(sensor: &mut Ism330Dhcx, i2c: &mut I2C)
 where
-    I2C: embedded_hal::i2c::I2c,
+    I2C: embedded_hal_async::i2c::I2c,
 {
     // =======================================
     // CTRL3_C
